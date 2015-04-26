@@ -23,19 +23,17 @@ class DB_Functions {
     public function addUser($fname, $lname, $email, $uname, $password) {
     	$con = $this->connectdb();
 
-    	$uuid = uniqid('', true);
         $hash = $this->hashSSHA($password);
         $encrypted_password = $hash["encrypted"]; // encrypted password
         $salt = $hash["salt"]; // salt
-        $result = mysqli_query($con, "INSERT INTO users(id, firstname, lastname, email, username, encrypted_password, salt, created_at) VALUES('$uuid', '$fname', '$lname', '$email', '$uname', '$encrypted_password', '$salt', NOW())");
+        $result = mysqli_query($con, "INSERT INTO users(fname, lname, email, username, encrypted_password, salt, created_at) VALUES('$fname', '$lname', '$email', '$uname', '$encrypted_password', '$salt', NOW())");
     	// check for successful store
         if ($result) {
             // get user details 
-            $uid = mysql_insert_id(); // last inserted id
-            $result = mysqli_query($con, "SELECT * FROM users WHERE id = $uid");
+            $uid = mysqli_insert_id($con); // last inserted id
+            $res = mysqli_query($con, "SELECT * FROM users WHERE id = $uid");
             // return user details
-            return mysql_fetch_array($result);
-            return true;
+            return mysqli_fetch_array($res, MYSQLI_ASSOC);
         } else {
             return false;
         }
@@ -63,7 +61,7 @@ class DB_Functions {
         // check for result 
         $no_of_rows = mysql_num_rows($result);
         if ($no_of_rows > 0) {
-            $result = mysql_fetch_array($result);
+            $result = mysqli_fetch_array($result, MYSQLI_ASSOC);
             $salt = $result['salt'];
             $encrypted_password = $result['encrypted_password'];
             $hash = $this->checkhashSSHA($salt, $password);

@@ -44,7 +44,8 @@ class DB_Functions {
 
     //Check if user exists or not
     public function userExist($email) {
-        $result = mysql_query("SELECT email from users WHERE email = '$email'");
+    	$con = $this->connectdb();
+        $result = mysqli_query($con, "SELECT email from users WHERE email = '$email'");
         $no_of_rows = mysql_num_rows($result);
         if ($no_of_rows > 0) {
             // user exists 
@@ -55,14 +56,41 @@ class DB_Functions {
         }
     }
 
+    //get user by email and password
+    public function getUserByEmailAndPassword($email, $password) {
+        $con = $this->connectdb();
+        $result = mysqli_query($con, "SELECT * FROM users WHERE email = '$email'") or die(mysql_error());
+        // check for result 
+        $no_of_rows = mysql_num_rows($result);
+        if ($no_of_rows > 0) {
+            $result = mysql_fetch_array($result);
+            $salt = $result['salt'];
+            $encrypted_password = $result['encrypted_password'];
+            $hash = $this->checkhashSSHA($salt, $password);
+            // check for password equality
+            if ($encrypted_password == $hash) {
+                // user authentication details are correct
+                return $result;
+            }
+        } else {
+            // user not found
+            return false;
+        }
+    }
+
 
     //returns salt and encrypted password.
     public function hashSSHA($password) {
-
         $salt = sha1(rand());
         $salt = substr($salt, 0, 10);
         $encrypted = base64_encode(sha1($password . $salt, true) . $salt);
         $hash = array("salt" => $salt, "encrypted" => $encrypted);
+        return $hash;
+    }
+
+    //get the hash from salt and password.
+    public function checkhashSSHA($salt, $password) {
+        $hash = base64_encode(sha1($password . $salt, true) . $salt);
         return $hash;
     }
 

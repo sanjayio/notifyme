@@ -32,7 +32,7 @@ class DB_Functions {
         if ($result) {
             // get user details 
             $uid = mysql_insert_id(); // last inserted id
-            $result = mysql_query("SELECT * FROM users WHERE id = $uid");
+            $result = mysqli_query($con, "SELECT * FROM users WHERE id = $uid");
             // return user details
             return mysql_fetch_array($result);
             return true;

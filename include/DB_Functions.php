@@ -59,7 +59,7 @@ class DB_Functions {
         $con = $this->connectdb();
         $result = mysqli_query($con, "SELECT * FROM users WHERE email = '$email'") or die(mysql_error());
         // check for result 
-        $no_of_rows = mysql_num_rows($result);
+        $no_of_rows = $result->num_rows;
         if ($no_of_rows > 0) {
             $result = mysqli_fetch_array($result, MYSQLI_ASSOC);
             $salt = $result['salt'];

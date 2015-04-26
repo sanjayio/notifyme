@@ -31,9 +31,35 @@
         		echo json_encode($response);
       		} else {
       			$response["error"] = 1;
-        		$response["error_msg"] = "JSON Error occured in Registration";
+        		$response["error_msg"] = "Username or Email already exists.";
         		echo json_encode($response);
       		}
+  		}
+  		else if($tag == 'login') {
+  			//get POST email and password
+  			$email = $_POST['email'];
+    		$password = $_POST['password'];
+    		//check for user
+    		$user = $db->getUserByEmailAndPassword($email, $password);
+    		if($user != false) {
+    			$response["success"] = 1;
+      			$response["user"]["fname"] = $user["fname"];
+      			$response["user"]["lname"] = $user["lname"];
+      			$response["user"]["email"] = $user["email"];
+      			$response["user"]["uname"] = $user["username"];
+      			$response["user"]["uid"] = $user["id"];
+      			$response["user"]["created_at"] = $user["created_at"];
+      			echo json_encode($response);
+    		} else {
+    			//user not found
+    			$response["error"] = 1;
+      			$response["error_msg"] = "Incorrect email or password.";
+      			echo json_encode($response);
+    		}
+  		} else {
+  			$response["error"] = 3;
+     		$response["error_msg"] = "JSON ERROR";
+     		echo json_encode($response);
   		}
 	} else {
 		echo "notifyme API";

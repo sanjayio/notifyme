@@ -42,6 +42,20 @@ class DB_Functions {
     }
 
 
+    //Check if user exists or not
+    public function userExist($email) {
+        $result = mysql_query("SELECT email from users WHERE email = '$email'");
+        $no_of_rows = mysql_num_rows($result);
+        if ($no_of_rows > 0) {
+            // user exists 
+            return true;
+        } else {
+            // user doesn't exist
+            return false;
+        }
+    }
+
+
     //returns salt and encrypted password.
     public function hashSSHA($password) {
 

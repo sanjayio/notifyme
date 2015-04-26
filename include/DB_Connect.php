@@ -13,12 +13,12 @@ class DB_Connect {
 
     // Connecting to database
     public function connect() {
-        require_once 'include/config.php';
+        require_once 'config.php';
         // connecting to mysql
-        $con = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
+        $con = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
         // selecting database
-        mysql_select_db(DB_DATABASE);
-
+        mysqli_select_db($con, DB_DATABASE);
+        //echo "database connection successful.";
         // return database handler
         return $con;
     }
